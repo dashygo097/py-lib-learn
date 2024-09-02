@@ -1,0 +1,19 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "x_axis": {
+      "feature": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "y_axis": {
+      "dtype": "float64",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
