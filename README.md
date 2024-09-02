@@ -1,2 +1,2 @@
 # Python-Libs-Learning
-Pytorch part refers to d2l.
+Pytorch section refers to d2l.
