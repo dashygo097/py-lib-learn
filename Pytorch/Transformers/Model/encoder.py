@@ -1,6 +1,7 @@
 from typing import Union, Callable, Tuple, Any, Optional, Dict
 
 import torch
+import math
 
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
@@ -93,10 +94,19 @@ class Encoder(nn.Module):
                 d_model,num_heads,d_inner,q_size,k_size,v_size,
                 norm_shape,dropout,masked=masked,bias=bias))
 
-    def forward(self):
-        
-        return
+    def forward(self,x):
 
+        x = self.pos_encoder(self.embed(x) * math.sqrt(self.d_model))
+        for i,blk in enumerate(self.blks):
+            x = blk(x)
+        return x
+
+'''
+encoder = Encoder(
+    200, 2, 24, 8, 48, 24, 24, 24, [100,24], 0.5,)
+encoder.eval()
+print(encoder(torch.ones((2, 100), dtype=torch.long)).shape)
+'''
 
 
 
