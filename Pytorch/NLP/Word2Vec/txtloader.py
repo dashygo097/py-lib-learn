@@ -1,20 +1,47 @@
 import os
-from datasets import DatasetDict,Dataset,load_dataset
+from datasets import DatasetDict, Dataset
 
 
-def load_txt(path):
-
+def load_txt(path , flatten = False,pre =False, token="word"):
     with open(path, "r") as f:
         lines = f.readlines()
 
-    data = {}
+    data = []
     vocab_dir = {}
-    for sentence_id,line in enumerate(lines) :
-        data[sentence_id] = line
+    index = 0
+    for sentence_id, line in enumerate(lines):
+        data.append(line)
+        word_list = line.split(" ")
+        for word in word_list:
+            if word not in vocab_dir.keys():
+                vocab_dir[word] = index
+                index += 1
+    if token == "word":
+        if flatten :
+            if pre:
+                data = [vocab_dir[word] for line in data for word in line.split(" ")]
+            else :
+                data = [word for line in data for word in line.split(" ")]
 
-    return data
+    elif token == "char":
+        vocab_dir_char = {}
+        index = 0
+        for word in vocab_dir.keys():
+            for char in word :
+                if char not in vocab_dir_char.keys():
+                    vocab_dir_char[char] = index
+                    index += 1
+        if flatten:
+            if pre :
+                data = [vocab_dir_char[letter] for line in data for letter in line]
+            else :
+                data =[letter for line in data for letter in line]
 
-def load_from_txt(data_dir , to_path = "./data"):
+        vocab_dir = vocab_dir_char
+
+    return data, vocab_dir
+
+def convert_from_txt(data_dir , to_path = "./data"):
     files = os.listdir(data_dir)
     datadir = {}
     for file_name in files :
@@ -41,4 +68,5 @@ def load_from_txt(data_dir , to_path = "./data"):
 # load_from_txt("./ptb")
 #
 #
+
 
