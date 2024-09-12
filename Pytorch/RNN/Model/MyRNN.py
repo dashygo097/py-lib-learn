@@ -20,7 +20,7 @@ def init_rnn_state(batch_size, num_hiddens, device):
 class Basic097(nn.Module):
 
     def __init__(self, vocab_size , num_hiddens, out_size,device,
-    forward_fn=rnn_cal , init_state=init_rnn_state, is_embed = False , embed_size = 128):
+    forward_fn=rnn_cal , init_state=init_rnn_state):
         super().__init__()
         self.inputs_size = vocab_size
         self.outputs_size = out_size
@@ -34,11 +34,7 @@ class Basic097(nn.Module):
 
         self.forward_fn = forward_fn
         self.init_state = init_state
-        self.is_embed = is_embed
-        if is_embed:
-            self.encoder = nn.Embedding(vocab_size , embed_size)
-        else :
-            self.encoder = F.one_hot
+        self.encoder = F.one_hot
 
         self.params = [self.W_xh, self.W_hh, self.b_h, self.W_hq, self.b_q]
 
