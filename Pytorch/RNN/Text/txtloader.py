@@ -7,8 +7,8 @@ def load_txt(path , flatten = False,pre =False, token="word"):
         lines = f.readlines()
 
     data = []
-    vocab_dir = {}
-    index = 0
+    vocab_dir = {' ': 0}
+    index = 1
     for sentence_id, line in enumerate(lines):
         data.append(line)
         word_list = line.split(" ")
@@ -69,5 +69,8 @@ def convert_from_txt(data_dir , to_path = "./data"):
 #
 # load_from_txt("./ptb")
 #
+#
+
+
 #
 
