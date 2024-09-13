@@ -6,7 +6,7 @@ from torch import nn
 
 
 def normal(shape,device):
-    return torch.randn(size=shape, device=device) *0.01
+    return torch.randn(size=shape, device=device,) *0.01
 
 
 def three(num_inputs,num_hiddens,device):
@@ -49,9 +49,10 @@ def get_lstm_params(vocab_size, num_hiddens, device):
     nn.init.normal_(dense.weight,std=0.01)
     # 附加梯度
     params = [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc,
-              b_c, W_hq, b_q ,dense]
+              b_c, W_hq, b_q ]
     for param in params:
         param.requires_grad_(True)
+    params.append(dense)
     return params
 
 
@@ -76,8 +77,8 @@ class Basic097(nn.Module):
     def begin_state(self, batch_size, device):
         return self.init_state(batch_size, self.num_hiddens, device)
 
-    def predict(self,outputs):
-        outputs = self.output_head(outputs.reshape(-1,self.max_length))
+    def predict(self,outputs,device):
+        outputs = self.output_head(outputs.reshape(-1,self.max_length)).to(device)
         return outputs
 def encoder(tokenizer,inputs,max_length=512,padding=True):
     outputs = []
