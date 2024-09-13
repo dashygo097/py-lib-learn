@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 
 from datasets import load_dataset
 from transformers import AutoTokenizer
@@ -11,20 +12,20 @@ dataset = load_dataset("./stanford-imdb/plain_text")
 tokenizer = AutoTokenizer.from_pretrained("./bert-tokenizer")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-batch_size = 4
+batch_size = 1000
 num_hiddens = max_length = 512
 
 model = Basic097(tokenizer.vocab_size ,num_hiddens, device , max_length = max_length).to(device)
 
-loss = nn.CrossEntropyLoss()
-optimizer = torch.optim.AdamW(model.parameters() , lr = 1e-3)
+loss = nn.MSELoss()
+optimizer = torch.optim.AdamW(model.parameters() , lr = 0.1)
 
 loss_epoch = []
 
 features = encoder(tokenizer,dataset["train"]["text"],max_length=max_length)
 labels = torch.tensor(dataset["train"]["label"])
 train_data = TensorDataset(features, labels)
-data_loader = DataLoader(train_data , batch_size=batch_size  ,shuffle=False)
+data_loader = DataLoader(train_data , batch_size=batch_size  ,shuffle=True)
 
 def trainer(model, n_epochs):
     model.train()
@@ -38,9 +39,10 @@ def trainer(model, n_epochs):
             state = model.begin_state(batch_size, device=device)
             output, state = model(X_batch.detach(), state)
             pred = model.predict(output, device)
-
-            l = loss(pred, y_batch)
-            loss_reg += l.item()
+            
+            l = loss(pred.reshape(-1), y_batch.type(torch.float32))
+            loss_reg += l
+            
 
             l.backward()
             optimizer.step()
